@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-from asgiref.sync import async_to_sync
 import threading
-from gevent.pool import Pool
 import asyncio
 import json
 from requests import HTTPError
@@ -11,7 +9,7 @@ from typing import Optional
 from time import sleep
 from locust import HttpUser, task
 from play import Reader, Action
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 
 from itertools import count as iter_count
 import os
@@ -122,7 +120,8 @@ class HelloWorldUser(HttpUser):
         self.ws = await websockets.connect(self.ws_url())
 
         # Send handshake request
-        handshake = json.dumps({"protocol": "json", "version": 1}) + self.signalr_sep
+        handshake = json.dumps(
+            {"protocol": "json", "version": 1}) + self.signalr_sep
         await self.ws.send(handshake)
 
         # Read handshake response
@@ -238,7 +237,7 @@ class HelloWorldUser(HttpUser):
     def make_move(self):
         sleep(2)
 
-        if self.game.player2 == None:
+        if self.game.player2 is None:
             return
 
         print("Adding move: ", self.p.color)
